@@ -1,8 +1,7 @@
-from socket import IP_DROP_MEMBERSHIP
 from rest_framework.views import APIView, Response, status
 from django.forms import model_to_dict
 from contents.models import Content
-import ipdb
+from contents.content_serializer import ContentSerializer
 
 class ContentView(APIView):
     def get(self, request):
@@ -15,11 +14,15 @@ class ContentView(APIView):
 
     def post(self, request):
 
-        content = Content.objects.create(**request.data)
+        serializer = ContentSerializer(**request.data)
 
-        content_dict = model_to_dict(content)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
-        return Response(content_dict, status.HTTP_201_CREATED)
+        content = Content.objects.create(**serializer.validate_data)
+        serializer = ContentSerializer(content)
+
+        return Response(serializer.data, status.HTTP_201_CREATED)
 
 class ContentDetailView(APIView):
 
