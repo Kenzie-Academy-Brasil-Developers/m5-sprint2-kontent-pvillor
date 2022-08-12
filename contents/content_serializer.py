@@ -15,18 +15,6 @@ class ContentSerializer:
         self.data = kwargs
         self.errors = {}
 
-    def is_valid(self) -> bool:
-
-        self.clean_data()
-
-        try:
-            self.validate_required_keys()
-            self.validate_data_types()
-
-            return True
-        except DataValidationError:
-            return False
-
     def clean_data(self):
         data_keys = tuple(self.data.keys())
         for key in data_keys:
@@ -51,3 +39,15 @@ class ContentSerializer:
 
         if self.errors:
             raise DataValidationError
+
+    def is_valid(self) -> bool:
+
+        self.clean_data()
+
+        try:
+            self.validate_required_keys()
+            self.validate_data_types()
+
+            return True
+        except DataValidationError:
+            return False

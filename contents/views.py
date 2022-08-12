@@ -19,10 +19,10 @@ class ContentView(APIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
-        content = Content.objects.create(**serializer.validate_data)
+        content = Content.objects.create(**request.data)
         serializer = ContentSerializer(content)
 
-        return Response(serializer.data, status.HTTP_201_CREATED)
+        return Response(request.data, status.HTTP_201_CREATED)
 
 class ContentDetailView(APIView):
 
@@ -30,7 +30,7 @@ class ContentDetailView(APIView):
 
         try:
             content = Content.objects.get(id=content_id)
-        except content.DoesNotExist:
+        except Content.DoesNotExist:
             return Response({"details": "content not found"}, status.HTTP_404_NOT_FOUND)
 
         content_dict = model_to_dict(content)
